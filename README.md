@@ -8,7 +8,8 @@
 [![Platform](https://img.shields.io/cocoapods/p/UIPiPView.svg?style=flat)](https://cocoapods.org/pods/UIPiPView)
 -->
 
-<img src="./Document/image.gif" width=200>
+https://github.com/user-attachments/assets/03b0f7f3-7f6f-486f-9bf0-e553d8b3d841
+
 
 **This library is a UIView that is capable of Picture-in-Picture (PiP) in iOS.**
 
