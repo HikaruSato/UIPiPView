@@ -33,6 +33,8 @@ open class UIPiPView: UIView,
                 sampleBufferDisplayLayer: pipBufferDisplayLayer,
                 playbackDelegate: self))
             controller.delegate = self
+            // これでlive表示だとskipボタンが非活性。非live表示だとskipボタンが消せる
+            controller.requiresLinearPlayback = true
             return controller
         } else {
             return nil
@@ -235,19 +237,20 @@ open class UIPiPView: UIView,
 
         /// The following code will suppress AVKit (AVTimer work queue).
         /// see https://github.com/uakihir0/UIPiPView/issues/17
-        return .init(
-            start: .zero,
-            duration: .init(
-                value: 3600 * 24,
-                timescale: 1
-            )
+        .init(
+            start: .indefinite,
+            // 24時間にセット
+            duration: .init(seconds: 60 * 60 * 24 * 30, preferredTimescale: .init(1))
         )
+
+        //live 表示
+//        .init(start: .negativeInfinity, duration: .positiveInfinity)
     }
 
     open func pictureInPictureControllerIsPlaybackPaused(
         _ pictureInPictureController: AVPictureInPictureController
     ) -> Bool {
-        return false
+        return true
     }
 
     open func pictureInPictureController(
