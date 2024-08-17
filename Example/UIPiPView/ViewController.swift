@@ -11,18 +11,35 @@ import UIPiPView
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var pipView2: UIPiPView!
+    @IBOutlet weak var pipView2Label: UILabel!
+    
     private let pipView = UIPiPView()
     private let startButton = UIButton()
     private let timeLabel = UILabel()
 
     private var timer: Timer!
     private let formatter = DateFormatter()
+    private var count: Int = 1
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
-        let width = CGFloat(240)
 
+
+        pipView2.removeFromSuperview()
+        let window = (UIApplication.shared.delegate as! AppDelegate).window!
+        window.addSubview(pipView2)
+        window.sendSubviewToBack(pipView2)
+        pipView2.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            pipView2.topAnchor.constraint(equalTo: window.topAnchor, constant: 280),
+            pipView2.leadingAnchor.constraint(equalTo: window.leadingAnchor, constant: 20),
+            pipView2.trailingAnchor.constraint(equalTo: window.trailingAnchor, constant: -20),
+            pipView2.heightAnchor.constraint(equalToConstant: 50)
+        ])
+
+
+        let width = CGFloat(240)
         /// Start Button
         let margin = ((self.view.bounds.width - width) / 2)
         startButton.frame = .init(x: margin, y: 80, width: width, height: 40)
@@ -53,11 +70,17 @@ class ViewController: UIViewController {
         timer = Timer(timeInterval: (0.1 / 60.0), repeats: true) { [weak self] _ in
             guard let self = self else { return }
             self.timeLabel.text = self.formatter.string(from: Date())
+            self.pipView2Label.text = count.description
+            self.count += 1
         }
         RunLoop.main.add(timer, forMode: .default)
+
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
     @objc func toggle() {
+        let pipView = pipView2!
         if (!pipView.isPictureInPictureActive()) {
             pipView.startPictureInPicture(withRefreshInterval: (0.1 / 60.0))
         } else {
@@ -67,6 +90,24 @@ class ViewController: UIViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+
+    @objc func appMovedToBackground() {
+        if (!pipView.isPictureInPictureActive()) {
+            pipView.startPictureInPicture(withRefreshInterval: (0.1 / 60.0))
+        }
+    }
+    
+    @IBAction func didTapShowModal(_ sender: Any) {
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ModalViewController") as! ModalViewController
+        vc.modalPresentationStyle = .fullScreen
+        vc.startPip = { [weak self] in
+            guard let self else { return }
+            if (!self.pipView2.isPictureInPictureActive()) {
+                self.pipView2.startPictureInPicture(withRefreshInterval: (0.1 / 60.0))
+            }
+        }
+        present(vc, animated: true)
     }
 }
 
