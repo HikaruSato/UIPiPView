@@ -67,7 +67,7 @@ class ViewController: UIViewController {
 
         /// Time Label  shows now.
         formatter.dateFormat = "y-MM-dd H:mm:ss.SSSS"
-        timer = Timer(timeInterval: (0.1 / 60.0), repeats: true) { [weak self] _ in
+        timer = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             self.timeLabel.text = self.formatter.string(from: Date())
             self.pipView2Label.text = count.description
@@ -79,7 +79,7 @@ class ViewController: UIViewController {
     @objc func toggle() {
         let pipView = pipView2!
         if (!pipView.isPictureInPictureActive()) {
-            pipView.startPictureInPicture(withRefreshInterval: (0.1 / 60.0))
+            pipView.startPictureInPicture(withRefreshInterval: 60.0)
         } else {
             pipView.stopPictureInPicture()
         }
@@ -95,7 +95,7 @@ class ViewController: UIViewController {
         vc.startPip = { [weak self] in
             guard let self else { return }
             if (!self.pipView2.isPictureInPictureActive()) {
-                self.pipView2.startPictureInPicture(withRefreshInterval: (0.1 / 60.0))
+                self.pipView2.startPictureInPicture(withRefreshInterval: 60.0)
             }
         }
         present(vc, animated: true)

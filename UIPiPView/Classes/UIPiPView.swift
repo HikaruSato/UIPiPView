@@ -239,8 +239,8 @@ open class UIPiPView: UIView,
         /// see https://github.com/uakihir0/UIPiPView/issues/17
         .init(
             start: .indefinite,
-            // 24時間にセット
-            duration: .init(seconds: 60 * 60 * 24 * 30, preferredTimescale: .init(1))
+            // 最大時間にセット
+            duration: .init(seconds: .greatestFiniteMagnitude, preferredTimescale: .init(1))
         )
 
         //live 表示
