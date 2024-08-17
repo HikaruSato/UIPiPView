@@ -74,9 +74,6 @@ class ViewController: UIViewController {
             self.count += 1
         }
         RunLoop.main.add(timer, forMode: .default)
-
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
     @objc func toggle() {
@@ -92,12 +89,6 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
 
-    @objc func appMovedToBackground() {
-        if (!pipView.isPictureInPictureActive()) {
-            pipView.startPictureInPicture(withRefreshInterval: (0.1 / 60.0))
-        }
-    }
-    
     @IBAction func didTapShowModal(_ sender: Any) {
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ModalViewController") as! ModalViewController
         vc.modalPresentationStyle = .fullScreen
