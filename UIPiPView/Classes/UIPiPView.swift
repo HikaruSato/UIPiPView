@@ -205,6 +205,8 @@ open class UIPiPView: UIView,
         _ pictureInPictureController: AVPictureInPictureController,
         failedToStartPictureInPictureWithError error: Error
     ) {
+        let errorMsg = (error as NSError).userInfo.values.compactMap { $0 as? String }.joined(separator: "\n")
+        print("failedToStartPictureInPictureWithError: \(errorMsg)")
     }
 
     open func pictureInPictureControllerWillStartPictureInPicture(
