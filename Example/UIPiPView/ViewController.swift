@@ -11,10 +11,9 @@ import UIPiPView
 
 class ViewController: UIViewController {
 
-    @IBOutlet weak var pipView2: UIPiPView!
-    @IBOutlet weak var pipView2Label: UILabel!
-    
-    private let pipView = UIPiPView()
+    @IBOutlet weak var pipView: UIPiPView!
+    @IBOutlet weak var pipViewLabel: UILabel!
+
     private let startButton = UIButton()
     private let timeLabel = UILabel()
 
@@ -24,20 +23,21 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-
-        pipView2.removeFromSuperview()
         let window = (UIApplication.shared.delegate as! AppDelegate).window!
-        window.addSubview(pipView2)
-        window.sendSubviewToBack(pipView2)
-        pipView2.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            pipView2.topAnchor.constraint(equalTo: window.topAnchor, constant: 280),
-            pipView2.leadingAnchor.constraint(equalTo: window.leadingAnchor, constant: 20),
-            pipView2.trailingAnchor.constraint(equalTo: window.trailingAnchor, constant: -20),
-            pipView2.heightAnchor.constraint(equalToConstant: 50)
-        ])
 
+
+        pipView.removeFromSuperview()
+
+        window.addSubview(pipView)
+        window.sendSubviewToBack(pipView)
+        pipView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            pipView.topAnchor.constraint(equalTo: window.topAnchor, constant: 280),
+            pipView.leadingAnchor.constraint(equalTo: window.leadingAnchor, constant: 20),
+            pipView.trailingAnchor.constraint(equalTo: window.trailingAnchor, constant: -20),
+            pipView.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        pipView.startPiPRender()
 
         let width = CGFloat(240)
         /// Start Button
@@ -50,34 +50,37 @@ class ViewController: UIViewController {
         startButton.layer.cornerRadius = 10
         self.view.addSubview(startButton)
 
-        /// PiP View
-        pipView.frame = .init(x: margin, y: 160, width: width, height: 40)
-        pipView.backgroundColor = .black
-        self.view.addSubview(pipView)
-
         /// Time Label on PiPView
         timeLabel.frame = .init(x: 10, y: 0, width: width - 20, height: 40)
         timeLabel.textColor = .white
-        pipView.addSubview(timeLabel)
 
         if #available(iOS 13.0, *) {
             timeLabel.font = .monospacedSystemFont(ofSize: 30, weight: .medium)
             timeLabel.adjustsFontSizeToFitWidth = true
         }
 
+
+
         /// Time Label  shows now.
         formatter.dateFormat = "y-MM-dd H:mm:ss.SSSS"
         timer = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             self.timeLabel.text = self.formatter.string(from: Date())
-            self.pipView2Label.text = count.description
+            self.pipViewLabel.text = count.description
             self.count += 1
+            self.pipView.render()
+            self.pipView.becomeFirstResponder()
+            window.becomeFirstResponder()
         }
         RunLoop.main.add(timer, forMode: .default)
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+
     @objc func toggle() {
-        let pipView = pipView2!
+        let pipView = pipView!
         if (!pipView.isPictureInPictureActive()) {
             pipView.startPictureInPicture(withRefreshInterval: 60.0)
         } else {
@@ -94,8 +97,8 @@ class ViewController: UIViewController {
         vc.modalPresentationStyle = .fullScreen
         vc.startPip = { [weak self] in
             guard let self else { return }
-            if (!self.pipView2.isPictureInPictureActive()) {
-                self.pipView2.startPictureInPicture(withRefreshInterval: 60.0)
+            if (!self.pipView.isPictureInPictureActive()) {
+                self.pipView.startPictureInPicture(withRefreshInterval: 60.0)
             }
         }
         present(vc, animated: true)

@@ -35,6 +35,7 @@ open class UIPiPView: UIView,
             controller.delegate = self
             // これでlive表示だとskipボタンが非活性。非live表示だとskipボタンが消せる
             controller.requiresLinearPlayback = true
+            controller.canStartPictureInPictureAutomaticallyFromInline = true
             return controller
         } else {
             return nil
@@ -73,6 +74,20 @@ open class UIPiPView: UIView,
         setupVideoLayerView()
         DispatchQueue.main.async { [weak self] in
             self?.startPictureInPictureSub(refreshInterval: withRefreshInterval)
+        }
+    }
+
+    public func startPiPRender() {
+        setupVideoLayerView()
+        render() /// For initial display
+        guard let pipController = pipController else { return }
+        if (pipController.isPictureInPicturePossible) {
+
+            /// Start asynchronously after processing is complete
+            /// (will not work if run here synchronously)
+            DispatchQueue.main.async { [weak self] in
+                self?.setRenderInterval(1)
+            }
         }
     }
 
@@ -250,7 +265,7 @@ open class UIPiPView: UIView,
     open func pictureInPictureControllerIsPlaybackPaused(
         _ pictureInPictureController: AVPictureInPictureController
     ) -> Bool {
-        return true
+        return false
     }
 
     open func pictureInPictureController(
