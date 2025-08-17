@@ -80,15 +80,7 @@ open class UIPiPView: UIView,
     public func startPiPRender() {
         setupVideoLayerView()
         render() /// For initial display
-        guard let pipController = pipController else { return }
-        if (pipController.isPictureInPicturePossible) {
-
-            /// Start asynchronously after processing is complete
-            /// (will not work if run here synchronously)
-            DispatchQueue.main.async { [weak self] in
-                self?.setRenderInterval(1)
-            }
-        }
+        _ = pipController // init pipController
     }
 
     /// Starts PinP.

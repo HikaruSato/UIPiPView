@@ -69,8 +69,6 @@ class ViewController: UIViewController {
             self.pipViewLabel.text = count.description
             self.count += 1
             self.pipView.render()
-            self.pipView.becomeFirstResponder()
-            window.becomeFirstResponder()
         }
         RunLoop.main.add(timer, forMode: .default)
     }
